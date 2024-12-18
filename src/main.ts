@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app/app.module';
 import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app/app.module';
+import { SwaggerConfigModule } from './modules/swagger/swagger-config.module';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,10 +13,10 @@ async function bootstrap() {
     })
   );
   const configService = app.get(ConfigService);
+  SwaggerConfigModule.setupSwagger(app);
+
   const port = configService.get<number>('PORT');
   await app.listen(port);
-
   console.log(configService.get('PORT'));
-  
 }
 bootstrap();

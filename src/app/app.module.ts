@@ -4,12 +4,13 @@ import { AppService } from './app.service';
 import { AppConfigModule } from '../config/config.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '../database/database.module';
+import { SwaggerModule } from '@nestjs/swagger';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    AppConfigModule, DatabaseModule],
+    AppConfigModule, DatabaseModule, SwaggerModule],
   controllers: [AppController],
   providers: [AppService],
 })

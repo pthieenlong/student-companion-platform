@@ -38,4 +38,16 @@ export class AppConfigService {
   get accessToken(): string {
     return this.configService.get<string>('SECRET_ACCESS_TOKEN');
   }
+  get swaggerTitle(): string {
+    return this.configService.get<string>('SWAGGER_TITLE');
+  }
+  get swaggerDescription(): string {
+    return this.configService.get<string>('SWAGGER_DESCRIPTION');
+  }
+  get swaggerPath(): string {
+    return this.configService.get<string>('SWAGGER_PATH');
+  }
+  get swaggerVersion(): string {
+    return this.configService.get<string>('SWAGGER_VERSION');
+  }
 }
