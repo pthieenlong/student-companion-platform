@@ -1,0 +1,35 @@
+import { Body, Controller, Post } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { IResponse } from '../../shared/types/CustomResponse';
+import { RegisterDTO, LoginDTO } from './DTO/auth.dto';
+import { CustomRequest } from '../../common/interceptors/customRequest.interceptor';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @CustomRequest(RegisterDTO)
+  @Post('/register')
+  create(@Body() body: RegisterDTO): Promise<IResponse> {
+    const user = {
+      username: body.username,
+      password: body.password,
+      confirmPassword: body.confirmPassword,
+      email: body.email,
+      phoneNumber: body.phoneNumber,
+      fullName: body.fullName
+    }
+    return this.authService.register(user);
+  }
+
+  @CustomRequest(LoginDTO)
+  @Post('/signin')
+  login(@Body() body: LoginDTO): Promise<IResponse> {
+    const user = {
+      username: body.username,
+      password: body.password
+    }
+
+    return this.authService.login(user);
+  }
+}
