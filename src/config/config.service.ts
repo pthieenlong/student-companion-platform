@@ -33,20 +33,40 @@ export class AppConfigService {
 
   get refreshToken(): string {
     return this.configService.get<string>('SECRET_REFRESH_TOKEN');
-  
   }
+
   get accessToken(): string {
     return this.configService.get<string>('SECRET_ACCESS_TOKEN');
   }
+
+  get emailHost(): string {
+    return this.configService.get<string>('EMAIL_HOST');
+  }
+
+  get emailPort(): string {
+    return this.configService.get<string>('EMAIL_PORT');
+  }
+
+  get emailUsername(): string {
+    return this.configService.get<string>('EMAIL_USERNAME');
+  }
+
+  get emailPassword(): string {
+    return this.configService.get<string>('EMAIL_PASSWORD');
+  }
+
   get swaggerTitle(): string {
     return this.configService.get<string>('SWAGGER_TITLE');
   }
+
   get swaggerDescription(): string {
     return this.configService.get<string>('SWAGGER_DESCRIPTION');
   }
+  
   get swaggerPath(): string {
     return this.configService.get<string>('SWAGGER_PATH');
   }
+  
   get swaggerVersion(): string {
     return this.configService.get<string>('SWAGGER_VERSION');
   }
