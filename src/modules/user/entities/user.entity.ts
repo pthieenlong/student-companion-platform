@@ -1,7 +1,7 @@
 import School from "../../school/entities/school.entity";
 import { Active, AuthenticateToken, Role } from "../../../shared/enum/EUser";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { GroupUser } from "src/modules/group/entities/groupUser.entity";
+import { GroupUser } from "../../group/entities/groupUser.entity";
 
 @Entity()
 export default class User {

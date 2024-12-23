@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { RegisterDTO, LoginDTO } from './DTO/auth.dto';
@@ -31,5 +31,10 @@ export class AuthController {
     }
 
     return this.authService.login(user);
+  }
+
+  @Get('/generate-token')  
+  async getAccessToken(@Body('refreshToken') refreshToken: string): Promise<IResponse> {
+    return this.authService.getNewAccessToken(refreshToken);
   }
 }

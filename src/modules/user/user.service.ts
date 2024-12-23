@@ -31,4 +31,8 @@ export class UserService {
       data: userData
     }
   }
+
+  // async updateSelf(username: string, user: Partial<User>): Promise<IResponse> {
+
+  // }
 }

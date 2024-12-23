@@ -75,7 +75,8 @@ export class AuthService {
         const payload = {
           info: {
             username: user.username,
-            id: user.id
+            id: user.id,
+            role: user.role
           },
         };
         const refreshToken = this.jwtService.sign(payload, {
@@ -84,7 +85,7 @@ export class AuthService {
         });
         const accessToken = this.jwtService.sign(payload, {
           secret: this.configService.accessToken,
-          expiresIn: '1h'
+          expiresIn: '15m'
         });
   
         user.token = { refreshToken, accessToken };
@@ -104,6 +105,50 @@ export class AuthService {
         errors: [...error]
       }
     }
+  }
+  async getNewAccessToken(refreshToken: string): Promise<IResponse> {
+    try {
+      const payload = this.verifyRefreshToken(refreshToken);
+      const newAccessToken = await this.generateAccessToken((await payload).info.id);
+      return {
+        code: HttpStatus.OK,
+        success: true,
+        message: 'USER.TOKEN.SUCCESS',
+        data: { newAccessToken }
+      }
+    } catch(error) {
+      return {
+        code: HttpStatus.FORBIDDEN,
+        success: false,
+        message: 'USER.TOKEN.FAIL',
+        errors: [...error]
+      }
+    }
+  }
+  async generateAccessToken(userId: string) {
+    try {
+      const user = await this.authRepository.findOneBy({ id: userId });
+      const payload = {
+        info: {
+          username: user.username,
+          id: user.id,
+          role: user.role
+        },
+      };
+      return this.jwtService.sign(payload, {
+        secret: this.configService.accessToken,
+        expiresIn: '15m'
+      });
+    } catch (error) {
+      console.error(error)
+    }
+    
+  }
+
+  async verifyRefreshToken(token: string) {
+    return this.jwtService.verifyAsync(token, {
+      secret: this.configService.refreshToken
+    });
   }
 
 }

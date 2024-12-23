@@ -22,6 +22,14 @@ export enum SchoolRole {
   SUPPORTER = 'SUPPORTER'
 }
 
+export enum EAbility {
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  ALL = 'ALL',
+}
+
 export type GroupType = {
   id: string,
   role: GroupRole
