@@ -10,8 +10,7 @@ import { VerifyUserGuard } from '../../common/guards/auth/verify-user.guard';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @UseGuards(AuthGuard, RoleGuard)
-  // @Roles(Role.USER)
+  @UseGuards(AuthGuard)
   @Get('/:username')
   findUser(@Param('username') username: string): Promise<IResponse> {
     return this.userService.findOne(username);
@@ -20,6 +19,6 @@ export class UserController {
   @UseGuards(AuthGuard, VerifyUserGuard)
   @Put('/:username')
   updateUser(@Body() userUpdateDTO: UserUpdateDTO, @Param('username') username: string) {
-
+    return this.userService.updateSelf(username, userUpdateDTO);
   }
 }

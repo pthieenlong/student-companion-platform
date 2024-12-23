@@ -32,7 +32,31 @@ export class UserService {
     }
   }
 
-  // async updateSelf(username: string, user: Partial<User>): Promise<IResponse> {
+  async updateSelf(username: string, userAttrs: Partial<User>): Promise<IResponse> {
+    try {
+      const user = await this.repo.findOneBy({ username });
+      if(!user) {
+        return {
+          code: HttpStatus.CONFLICT,
+          success: false,
+          message: 'USER.UPDATE.NOT_FOUND'
+        }
+      }
 
-  // }
+      Object.assign(user, userAttrs);
+      await this.repo.save(user);
+      return {
+        code: HttpStatus.OK,
+        success: true,
+        message: 'USER.UPDATE.SUCCESS'
+      }
+    } catch (error) {
+      return {
+        code: HttpStatus.CONFLICT,
+        success: false,
+        message: 'USER.UPDATE.FAIL',
+        errors: [...error]
+      }
+    }
+  }
 }
