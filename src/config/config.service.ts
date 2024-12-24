@@ -43,8 +43,8 @@ export class AppConfigService {
     return this.configService.get<string>('EMAIL_HOST');
   }
 
-  get emailPort(): string {
-    return this.configService.get<string>('EMAIL_PORT');
+  get emailPort(): number {
+    return this.configService.get<number>('EMAIL_PORT');
   }
 
   get emailUsername(): string {

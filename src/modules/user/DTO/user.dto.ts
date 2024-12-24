@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString, Length, MinLength } from "class-validator";
+import { Match } from "src/common/decorators/match.decorator";
 
 export class UserUpdateDTO {
   @IsEmail()
@@ -24,4 +25,10 @@ export class UserUpdateDTO {
   @IsString()
   @IsOptional()
   major: string;
+}
+
+export class ActiveUserDTO {
+  @IsString()
+  @MinLength(6)
+  code: string
 }

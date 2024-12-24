@@ -21,4 +21,8 @@ export class UserController {
   updateUser(@Body() userUpdateDTO: UserUpdateDTO, @Param('username') username: string) {
     return this.userService.updateSelf(username, userUpdateDTO);
   }
+
+  activeUser(@Body() activeUserDTO: ActiveUserDTO, @Param('username') username: string) {
+    return this.userService.activeUser(username);
+  }
 }
