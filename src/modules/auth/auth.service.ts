@@ -7,9 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { Active } from '../../shared/enum/EUser';
+import { OtpService } from '../otp/otp.service';
+import { MailService } from '../mail/mail.service';
 @Injectable()
 export class AuthService {
-  constructor(@InjectRepository(User) private authRepository: Repository<User>, private configService: AppConfigService, private jwtService: JwtService) {
+  constructor(@InjectRepository(User) private authRepository: Repository<User>, private configService: AppConfigService, private jwtService: JwtService, private otpService: OtpService, private readonly mailService: MailService) {
     
   }
 
@@ -149,6 +152,87 @@ export class AuthService {
     return this.jwtService.verifyAsync(token, {
       secret: this.configService.refreshToken
     });
+  }
+
+  async sendActiveRequest(account: Partial<User>): Promise<IResponse> {
+    try {
+      const user = await this.authRepository.findOneBy({ username: account.username });
+      if(!user) {
+        return {
+          code: HttpStatus.NOT_FOUND,
+          success: false,
+          message: 'USER.LOGIN.NOT_FOUND'
+        }
+      }
+      if(user.isActive === Active.ACTIVE) {
+        return {
+          code: HttpStatus.CONFLICT,
+          success: false,
+          message: 'USER.ACTIVE.ACTIVED'
+        }
+      }
+      const otp = await this.otpService.generateOtp(user.username, user.email);
+      await this.mailService.sendMail(account.email, JSON.stringify(otp.data));
+
+      return {
+        code: HttpStatus.OK,
+        success: true,
+        message: 'USER.SEND_REQUEST.SUCCESS',
+        data: { otp }
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        code: HttpStatus.CONFLICT,
+        success: false,
+        message: 'USER.SEND_REQUEST.FAIL',
+      }
+    }
+  }
+
+  async activeUser(account: Partial<User>, otp: string): Promise<IResponse> {
+    try {
+      const user = await this.authRepository.findOneBy({ username: account.username });
+      if(!user) {
+        return {
+          code: HttpStatus.NOT_FOUND,
+          success: false,
+          message: 'USER.LOGIN.NOT_FOUND'
+        }
+      }
+      if(user.isActive === Active.ACTIVE) {
+        return {
+          code: HttpStatus.CONFLICT,
+          success: false,
+          message: 'USER.ACTIVE.ACTIVED'
+        }
+      }
+
+      const userOtp = await this.otpService.findOneBy(account.username, account.email);
+      if(otp !== userOtp.otp) {
+        return {
+          code: HttpStatus.NOT_ACCEPTABLE,
+          success: false,
+          message: 'USER.ACTIVE.MISSING.OTP'
+        }
+      } else {
+        user.isActive = Active.ACTIVE;
+        await this.authRepository.save(user);
+        return {
+          code: HttpStatus.OK,
+          success: true,
+          message: 'USER.ACTIVE.SUCCESS'
+        }
+      }
+
+    } catch (error) {
+      error
+      return {
+        code: HttpStatus.CONFLICT,
+        success: false,
+        message: 'USER.ACTIVE.FAIL'
+      }
+    }
   }
 
 }

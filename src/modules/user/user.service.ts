@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { IResponse } from '../../shared/types/CustomResponse';
+import { Active } from '../../shared/enum/EUser';
 
 @Injectable()
 export class UserService {
@@ -55,6 +56,34 @@ export class UserService {
         code: HttpStatus.CONFLICT,
         success: false,
         message: 'USER.UPDATE.FAIL',
+        errors: [...error]
+      }
+    }
+  }
+
+  async activeUser(username: string): Promise<IResponse>{
+    try {
+      const user = await this.repo.findOneBy({ username });
+      if(!user) {
+        return {
+          code: HttpStatus.CONFLICT,
+          success: false,
+          message: 'USER.ACTIVE.NOT_FOUND'
+        }
+      } else {
+        user.isActive = Active.ACTIVE;
+        await this.repo.save(user);
+        return {
+          code: HttpStatus.OK,
+          success: true,
+          message: 'USER.ACTIVE.SUCCESS'
+        }
+      }
+    } catch(error) {
+      return {
+        code: HttpStatus.CONFLICT,
+        success: false,
+        message: 'USER.ACTIVE.FAIL',
         errors: [...error]
       }
     }

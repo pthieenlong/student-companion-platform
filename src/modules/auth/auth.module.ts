@@ -5,10 +5,13 @@ import { AppConfigService } from '../../config/config.service';
 import User from '../user/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { OtpService } from '../otp/otp.service';
+import { MailService } from '../mail/mail.service';
+import { OtpEntity } from '../otp/entities/otp.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, OtpEntity]),
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_TOKEN,
       signOptions: { expiresIn: '1h'}
@@ -16,6 +19,6 @@ import { AuthService } from './auth.service';
   ],
   exports: [AuthService],
   controllers: [AuthController],
-  providers: [AuthService, AppConfigService]
+  providers: [AuthService, AppConfigService, OtpService, MailService]
 })
 export class AuthModule {}
