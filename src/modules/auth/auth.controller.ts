@@ -37,4 +37,25 @@ export class AuthController {
   async getAccessToken(@Body('refreshToken') refreshToken: string): Promise<IResponse> {
     return this.authService.getNewAccessToken(refreshToken);
   }
+
+  @Post('/active-request')
+  async sendActiveRequest(@Body() body): Promise<IResponse> {
+    const account = {
+      username: body.username,
+      email: body.email
+    }
+
+    return this.authService.sendActiveRequest(account);
+  }
+
+  @Post('/active-user')
+  async activeUser(@Body() body): Promise<IResponse> {
+    const account = {
+      username: body.username,
+      email: body.email
+    }
+    const otp = body.otp;
+    
+    return this.authService.activeUser(account, otp);
+  }
 }

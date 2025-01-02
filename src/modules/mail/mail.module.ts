@@ -3,9 +3,12 @@ import { MailService } from './mail.service';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { AppConfigService } from '../../config/config.service';
 import { Options } from 'nodemailer/lib/smtp-transport';
+import { AppConfigModule } from '../../config/config.module';
 @Module({
   imports: [
+    AppConfigModule,
     MailerModule.forRootAsync({
+      imports: [AppConfigModule],      
       inject: [AppConfigService],
       useFactory: (configService: AppConfigService): MailerOptions => {
         const transport: Options = {
@@ -17,13 +20,12 @@ import { Options } from 'nodemailer/lib/smtp-transport';
             pass: configService.emailPassword,
           },
         };
-        
         return {
           transport,
         }
       }
     }),
   ],
-  providers: [MailService]
+  providers: [MailService, AppConfigService]
 })
 export class MailModule {}
