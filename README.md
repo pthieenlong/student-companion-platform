@@ -4,7 +4,7 @@
 
 - Please use relative paths for import and files
 - Do not change gitignore except confirm by Lead team
--
+- Please test your code in production enviroment before merge into main branch.
 
 ## Project setup
 
@@ -12,9 +12,13 @@
 $ npm install
 ```
 
+# Setup Database
+
+- 
+
 # Setup ENV
 
-- After setup your database, then setup your ENV files. There must be 3 files. For example: test, development and production. Please test your code in production enviroment before merge into main branch.
+- After setup your database, then setup your ENV files. There must be 3 files. For example: test, development and production. 
 
 ## Compile and run the project
 
@@ -46,8 +50,4 @@ $ npm run test:cov
 
 ## Stay in touch
 
-- Author - [Pham Thien Long](https://facebook.com/p.thieenlong/)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- Author - [Pham Thien Long](https://facebook.com/p.thieenlong/).
