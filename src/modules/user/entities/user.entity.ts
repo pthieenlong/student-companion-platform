@@ -2,6 +2,7 @@ import School from "../../school/entities/school.entity";
 import { Active, AuthenticateToken, Role } from "../../../shared/enum/EUser";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { GroupUser } from "../../group/entities/groupUser.entity";
+import Note from "../../note/entities/note.entity";
 
 @Entity()
 export default class User {
@@ -49,6 +50,9 @@ export default class User {
 
   @Column('json', { nullable: true })
   token: AuthenticateToken;
+  
+  @OneToMany(() => Note, (note) => note.createdBy)
+  notes: Note[];
   
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   created_at: string;

@@ -11,13 +11,14 @@ import { MailModule } from '../modules/mail/mail.module';
 import { AppConfigService } from '../config/config.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { OtpModule } from 'src/modules/otp/otp.module';
+import { NoteModule } from 'src/modules/note/note.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     
-    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, MailModule, MailerModule, OtpModule],
+    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, MailModule, MailerModule, OtpModule, NoteModule],
   controllers: [AppController],
   providers: [AppService, AppConfigService],
 })
