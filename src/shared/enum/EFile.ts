@@ -1,0 +1,6 @@
+export enum FileEnum {
+  AVATAR,
+  THUMBNAIL,
+  NOTE_ATTACHMENT,
+  NOTE_IMAGE
+}

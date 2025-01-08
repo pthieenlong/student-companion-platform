@@ -1,4 +1,6 @@
-import { IsArray, IsOptional, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsOptional, IsString } from "class-validator";
+import { NoteStatus } from "../../../shared/enum/ENote";
+import Tag from '../../tag/entities/tag.entity';
 
 export class CreateNoteDTO {
   @IsString()
@@ -6,6 +8,10 @@ export class CreateNoteDTO {
   
   @IsString()
   content: string;
+  
+  @IsArray()
+  @ArrayNotEmpty()
+  tags: Tag[];
 
   @IsString()
   @IsOptional()
@@ -14,6 +20,8 @@ export class CreateNoteDTO {
   @IsArray()
   @IsOptional()
   files: string[];
+
+
 }
 
 export class UpdateNoteDTO {
@@ -32,4 +40,8 @@ export class UpdateNoteDTO {
   @IsArray()
   @IsOptional()
   files: string[];
+
+  @IsString()
+  @IsOptional()
+  noteStatus: NoteStatus;
 }

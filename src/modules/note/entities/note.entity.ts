@@ -2,7 +2,9 @@ import User from "../../user/entities/user.entity";
 import File from "../../file/entities/file.entity";
 import { NoteStatus } from "../../../shared/enum/ENote";
 import Comment from "../../comment/entites/comment.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import React from "../../react/entities/react.entity";
+import Tag from "../../tag/entities/tag.entity";
 
 @Entity()
 export default class Note {
@@ -24,25 +26,35 @@ export default class Note {
   @Column({ type: 'enum', enum: NoteStatus, default: NoteStatus.PUBLIC })
   noteStatus: NoteStatus;
   
-  @OneToMany(() => Comment, (comment) => comment.parent)
+  @OneToMany(() => Comment, (comment) => comment.parent, { cascade: true })
   comments: Comment[];
   
-  @Column({ type: 'int', default: 0 })
-  react: number;
-  
-  @OneToMany(() => File, (file) => file.note)
+  @OneToMany(() => File, (file) => file.note, { cascade: true })
   files: string[];
   
-  @ManyToOne(() => User, (user) => user.notes)
+  @ManyToOne(() => User, (user) => user.notes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdBy' })
   createdBy: User;
 
   @Column()
   createdByUsername: string;
 
+  @Column({ default: 0 })
+  likeCount: number;
+
+  @OneToMany(() => React, (react) => react.note)
+  reacts: React[];
+
+  @ManyToMany(() => Tag, (tag) => tag.notes, { onDelete: 'CASCADE' })
+  @JoinTable()
+  tags: Tag[];
+
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   created_at: string;
 
   @Column({type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   updated_at: string;
+
+  @DeleteDateColumn({type: 'timestamp', default: null })
+  deleteAt?: string | null;
 }

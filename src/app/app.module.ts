@@ -10,15 +10,17 @@ import { UserModule } from '../modules/user/user.module';
 import { MailModule } from '../modules/mail/mail.module';
 import { AppConfigService } from '../config/config.service';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { OtpModule } from 'src/modules/otp/otp.module';
-import { NoteModule } from 'src/modules/note/note.module';
+import { OtpModule } from '../modules/otp/otp.module';
+import { NoteModule } from '../modules/note/note.module';
+import { TagModule } from '../modules/tag/tag.module';
+import { FileModule } from '../modules/file/file.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     
-    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, MailModule, MailerModule, OtpModule, NoteModule],
+    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, MailModule, MailerModule, OtpModule, NoteModule, TagModule, FileModule],
   controllers: [AppController],
   providers: [AppService, AppConfigService],
 })

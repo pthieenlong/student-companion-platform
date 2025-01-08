@@ -3,6 +3,7 @@ import { Active, AuthenticateToken, Role } from "../../../shared/enum/EUser";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { GroupUser } from "../../group/entities/groupUser.entity";
 import Note from "../../note/entities/note.entity";
+import React from "../../react/entities/react.entity";
 
 @Entity()
 export default class User {
@@ -54,6 +55,9 @@ export default class User {
   @OneToMany(() => Note, (note) => note.createdBy)
   notes: Note[];
   
+  @OneToMany(() => React, (react) => react.user)
+  reacts: React[]
+
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   created_at: string;
 

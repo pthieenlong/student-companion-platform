@@ -18,7 +18,7 @@ export default class Comment {
   @Column({ type: 'uuid', nullable: true })
   replyTo: string;
 
-  @ManyToOne(() => Note, (note) => note.comments)
+  @ManyToOne(() => Note, (note) => note.comments, { onDelete: "CASCADE" })
   parent: string;
 
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
