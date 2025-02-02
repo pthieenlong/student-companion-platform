@@ -7,12 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { AppConfigService } from '../../config/config.service';
-import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from '../../common/guards/role/role.guard';
 import { UserValidationPipe } from '../../common/pipes/user-validation/user-validation.pipe';
+import FileEntity from '../file/entities/file.entity';
+import { FileModule } from '../file/file.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), AuthModule,JwtModule],
+  imports: [TypeOrmModule.forFeature([User, FileEntity]), AuthModule,JwtModule, FileModule],
   exports: [UserService],
   controllers: [UserController],
   providers: [UserService, AuthGuard, AppConfigService, RoleGuard, UserValidationPipe],

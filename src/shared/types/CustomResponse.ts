@@ -1,17 +1,17 @@
 import { HttpStatus } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 
-export interface Pagination {
+export interface Pagination<T> {
 	limit: number;
 	page: number;
 	totalPage: number;
+	item: T;
 	totalItem?: number;
 };
 export interface IResponse<T = object> {
 	code: HttpStatus;
 	success: boolean;
 	message: string | ValidationError[];
-	pagination?: Pagination;
-	data?: T;
+	data?: T | Pagination<T>;
 	errors?: unknown
 }
