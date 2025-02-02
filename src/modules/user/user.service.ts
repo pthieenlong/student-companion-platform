@@ -7,9 +7,9 @@ import { Active } from '../../shared/enum/EUser';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private repo: Repository<User>) {
-
-  }
+  constructor(
+    @InjectRepository(User) private repo: Repository<User>
+  ) {}
   async findOne(username: string): Promise<IResponse> {
     const user = await this.repo.findOneBy({ username });
 
