@@ -13,7 +13,7 @@ import { FILE_PATH } from '../../shared/constants/const';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('/:username')
   findUser(@Param('username') username: string): Promise<IResponse> {
     return this.userService.findOne(username);

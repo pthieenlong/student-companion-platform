@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { RegisterDTO, LoginDTO } from './DTO/auth.dto';
 import { CustomRequest } from '../../common/interceptors/customRequest.interceptor';
+import { AuthGuard } from '../../common/guards/auth/auth.guard';
+import { VerifyUserGuard } from 'src/common/guards/auth/verify-user.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +40,7 @@ export class AuthController {
     return this.authService.getNewAccessToken(refreshToken);
   }
 
+  @UseGuards(AuthGuard, VerifyUserGuard)
   @Post('/active-request')
   async sendActiveRequest(@Body() body): Promise<IResponse> {
     const account = {

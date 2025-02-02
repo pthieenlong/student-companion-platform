@@ -10,7 +10,7 @@ import { FileService } from '../file/file.service';
 export class UserService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
-    private fileService: FileService, 
+    private fileService: FileService,
   ) {}
   async findOne(username: string): Promise<IResponse> {
     const user = await this.repo.findOne({ 
