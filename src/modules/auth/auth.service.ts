@@ -111,8 +111,8 @@ export class AuthService {
   }
   async getNewAccessToken(refreshToken: string): Promise<IResponse> {
     try {
-      const payload = this.verifyRefreshToken(refreshToken);
-      const newAccessToken = await this.generateAccessToken((await payload).info.id);
+      const payload = await this.verifyRefreshToken(refreshToken);
+      const newAccessToken = await this.generateAccessToken(payload.info.id);
       return {
         code: HttpStatus.OK,
         success: true,
@@ -120,11 +120,11 @@ export class AuthService {
         data: { newAccessToken }
       }
     } catch(error) {
+      console.log(error);
       return {
         code: HttpStatus.FORBIDDEN,
         success: false,
         message: 'USER.TOKEN.FAIL',
-        errors: [...error]
       }
     }
   }
