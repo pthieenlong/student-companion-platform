@@ -8,6 +8,7 @@ export class VerifyUserGuard implements CanActivate {
     if(request.params.username === user.info.username) 
       return true;
     else {
+      
       throw new UnauthorizedException();
     }
   }

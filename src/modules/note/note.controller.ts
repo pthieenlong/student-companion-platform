@@ -1,27 +1,38 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { NoteService } from './note.service';
 import { CreateNoteDTO, UpdateNoteDTO } from './DTO/note.dto';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { VerifyUserGuard } from '../../common/guards/auth/verify-user.guard';
-
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { FILE_PATH } from 'src/shared/constants/const';
 @Controller('note')
 export class NoteController {
   constructor(private noteService: NoteService) {}
 
   @UseGuards(AuthGuard, VerifyUserGuard)
+  @UseInterceptors(FilesInterceptor('file', 3, {
+    storage: diskStorage({
+      destination: (req, file, callback) => {
+        callback(null, FILE_PATH);
+      },
+      filename: (req, file, callback) => {
+        const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+        callback(null, uniqueSuffix);
+      }
+    })
+  }))
   @Post('/user/:username/create-note')
-  async createNote(@Body() body: CreateNoteDTO, @Param('username') username: string): Promise<IResponse> {
+  async createNote(@Body() body: CreateNoteDTO, @Param('username') username: string, @UploadedFiles() files?: Express.Multer.File[]): Promise<IResponse> {
     const note = { ...body }
-    console.log(note.tags);
-    
-    return await this.noteService.createNote(note, username);
+    return await this.noteService.createNote(note, username, files ? files : null);
   }
   
   @UseGuards(AuthGuard, VerifyUserGuard)
   @Delete('/user/:username/:slug')
-  async deleteNode(@Param() param): Promise<IResponse> {
-    return await this.noteService.deletePost(param.slug, param.username);
+  async deleteNote(@Param() param): Promise<IResponse> {
+    return await this.noteService.deleteNote(param.slug, param.username);
   }
 
   @Get('/user/:username')
@@ -35,9 +46,20 @@ export class NoteController {
   }
 
   @Patch('/:slug')
-  @UseGuards(AuthGuard, VerifyUserGuard)
-  async updateNoteBySlug(@Param('slug') slug: string, @Body() body: UpdateNoteDTO) {
-    return await this.noteService.updateNoteBySlug(slug, { ...body });
+  @UseInterceptors(FilesInterceptor('file', 3, {
+    storage: diskStorage({
+      destination: (req, file, callback) => {
+        callback(null, FILE_PATH);
+      },
+      filename: (req, file, callback) => {
+        const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+        callback(null, uniqueSuffix);
+      }
+    })
+  }))
+  @UseGuards(AuthGuard)
+  async updateNoteBySlug(@Param('slug') slug: string, @Body() body: UpdateNoteDTO,  @UploadedFiles() files?: Express.Multer.File[]) {
+    return await this.noteService.updateNoteBySlug(slug, { ...body }, files ? files : null);
   }
 
   @Patch('/react/:slug')

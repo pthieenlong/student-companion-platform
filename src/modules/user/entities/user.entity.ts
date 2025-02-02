@@ -1,9 +1,10 @@
 import School from "../../school/entities/school.entity";
 import { Active, AuthenticateToken, Role } from "../../../shared/enum/EUser";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { GroupUser } from "../../group/entities/groupUser.entity";
 import Note from "../../note/entities/note.entity";
 import React from "../../react/entities/react.entity";
+import FileEntity from "src/modules/file/entities/file.entity";
 
 @Entity()
 export default class User {
@@ -28,11 +29,7 @@ export default class User {
   @Column({ type: 'varchar', length: 40 })
   fullName: string;
 
-  @Column({ type: 'text', nullable: true })
-  avatar: string;
   
-  @Column({ type: 'text', nullable: true })
-  thumbnail: string;
 
   @Column({ type: 'text', nullable: true })
   biography: string;
@@ -52,6 +49,15 @@ export default class User {
   @Column('json', { nullable: true })
   token: AuthenticateToken;
   
+  @OneToOne(() => FileEntity, (file) => file.userAvatar, { nullable: true, cascade: true })
+  @JoinColumn({ name: 'avatarID' })
+  avatar: FileEntity;
+  
+  @OneToOne(() => FileEntity,(file) => file.userAvatar,  { nullable: true, cascade: true })
+  @JoinColumn({ name: 'thumbnailID' })
+
+  thumbnail: FileEntity;
+
   @OneToMany(() => Note, (note) => note.createdBy)
   notes: Note[];
   

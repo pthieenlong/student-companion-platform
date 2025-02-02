@@ -1,5 +1,5 @@
 import User from "../../user/entities/user.entity";
-import File from "../../file/entities/file.entity";
+import FileEntity from "../../file/entities/file.entity";
 import { NoteStatus } from "../../../shared/enum/ENote";
 import Comment from "../../comment/entites/comment.entity";
 import { Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
@@ -29,8 +29,8 @@ export default class Note {
   @OneToMany(() => Comment, (comment) => comment.parent, { cascade: true })
   comments: Comment[];
   
-  @OneToMany(() => File, (file) => file.note, { cascade: true })
-  files: string[];
+  @OneToMany(() => FileEntity, (file) => file.note, { cascade: true })
+  files: FileEntity[];
   
   @ManyToOne(() => User, (user) => user.notes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdBy' })
