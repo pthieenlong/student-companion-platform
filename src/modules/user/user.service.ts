@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { Active } from '../../shared/enum/EUser';
 import { FileService } from '../file/file.service';
+import { NoteService } from '../note/note.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
     private fileService: FileService,
+    // private noteService: NoteService,
   ) {}
   async findOne(username: string): Promise<IResponse> {
     const user = await this.repo.findOne({ 
@@ -27,6 +29,7 @@ export class UserService {
       major: user.major,
       school: user.school,
       groupMemberships: user.groupMemberships,
+      isActive: user.isActive,
       created_at: user.created_at
     }
 

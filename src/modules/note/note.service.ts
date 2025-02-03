@@ -83,7 +83,7 @@ export class NoteService {
         take,
         skip,
       });
-      if(total <= 0) {
+      if(total < 0) {
         return {
           code: HttpStatus.CONFLICT,
           success: false,

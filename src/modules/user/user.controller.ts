@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Patch, Put, Req, UploadedFile, UploadedFi
 import { UserService } from './user.service';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
-import { RoleGuard } from '../../common/guards/role/role.guard';
 import { ActiveUserDTO, UserUpdateDTO } from './DTO/user.dto';
 import { VerifyUserGuard } from '../../common/guards/auth/verify-user.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -41,8 +40,11 @@ export class UserController {
       }
     })
   }))
+  @UseGuards(AuthGuard, VerifyUserGuard)
   @Patch('/:username/avatar')
   updateUserAvatar(@Param('username') username: string, @UploadedFile() avatar: Express.Multer.File): Promise<IResponse> {
+    console.log(avatar);
+    
     return this.userService.updateAvatar(username, avatar);
   }
 }
