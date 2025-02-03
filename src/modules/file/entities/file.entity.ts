@@ -23,15 +23,12 @@ export default class FileEntity {
   fileType: FileType 
 
   @OneToOne(() => User, (user) => user.avatar, { onDelete: "CASCADE", nullable: true})
-  @JoinColumn()
+  @JoinColumn({ name: 'avatar' })
   userAvatar: User;
 
   @OneToOne(() => User, (user) => user.thumbnail, { onDelete: "CASCADE", nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'thumbnail' })
   userThumbnail: User;
-
-  // @ManyToOne(() => User, (user) => user.files, { onDelete: "CASCADE", nullable: true })
-  // user: User;
 
   @ManyToOne(() => Note, (note) => note.files, { onDelete: "CASCADE", nullable: true })
   @JoinColumn({ name: 'noteID' })

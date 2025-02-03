@@ -23,7 +23,6 @@ export class AuthGuard implements CanActivate {
         secret: this.configService.accessToken
       });
       request['token'] = payload;
-      console.log(request['token']);
     } catch {
       throw new HttpException(
               'USER.LOGIN.NOT_FOUND',
