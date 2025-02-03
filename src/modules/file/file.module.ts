@@ -9,10 +9,11 @@ import { AppConfigService } from '../../config/config.service';
 import { AppConfigModule } from '../../config/config.module';
 import { FILE_PATH } from '../../shared/constants/const';
 import { existsSync, mkdirSync } from 'fs';
+import User from '../user/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FileEntity]),
+    TypeOrmModule.forFeature([FileEntity, User]),
     MulterModule.registerAsync({
       useFactory: async () => {
         if(!existsSync(FILE_PATH)) {
@@ -32,19 +33,6 @@ import { existsSync, mkdirSync } from 'fs';
           })
         }
       }
-      // imports: [AppConfigModule],
-      // inject: [AppConfigService],
-      // useFactory: async (configService: AppConfigService) => {
-      //   return {
-      //     storage: diskStorage({
-      //       destination: FILE_PATH,
-      //       filename: (req, file, callback) => {
-      //         const filename = `${Date.now()}-${file.originalname}`;
-      //         callback(null, filename);
-      //       },
-      //     }),
-      //   };
-      // },
     }),
   ],
   controllers: [FileController],
