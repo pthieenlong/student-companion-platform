@@ -24,12 +24,12 @@ export class FileService {
   }
 
   async uploadAvatar(file: Express.Multer.File, user: User) { 
-    con st fs = require('fs');
+    const fs = require('fs');
     let avatar = await this.fileRepository.findOne({
       where: { 
         userAvatar: { id: user.id }
       }
-
+    })
     if(avatar) {
       if(fs.existsSync(avatar.filePath)) {
         fs.unlinkSync(avatar.filePath);
@@ -87,4 +87,5 @@ export class FileService {
     return await this.fileRepository.save(thumbnail);
   }
 }
+
 
