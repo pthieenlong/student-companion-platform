@@ -29,8 +29,6 @@ export default class User {
   @Column({ type: 'varchar', length: 40 })
   fullName: string;
 
-  
-
   @Column({ type: 'text', nullable: true })
   biography: string;
 
@@ -50,12 +48,11 @@ export default class User {
   token: AuthenticateToken;
   
   @OneToOne(() => FileEntity, (file) => file.userAvatar, { nullable: true, cascade: true })
-  @JoinColumn({ name: 'avatarID' })
+  @JoinColumn({ name: 'userAvatar' })
   avatar: FileEntity;
   
-  @OneToOne(() => FileEntity,(file) => file.userAvatar,  { nullable: true, cascade: true })
-  @JoinColumn({ name: 'thumbnailID' })
-
+  @OneToOne(() => FileEntity,(file) => file.userThumbnail,  { nullable: true, cascade: true })
+  @JoinColumn({ name: 'userThumbnail' })
   thumbnail: FileEntity;
 
   @OneToMany(() => Note, (note) => note.createdBy)

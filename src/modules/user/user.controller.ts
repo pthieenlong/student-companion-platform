@@ -8,7 +8,8 @@ import { VerifyUserGuard } from '../../common/guards/auth/verify-user.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FILE_PATH } from '../../shared/constants/const';
-
+import * as fs from 'fs';
+import * as path from "path";
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -33,7 +34,14 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: (req, file, callback) => {
-        callback(null, FILE_PATH);
+        const username = req.body.username;
+        const userDir = path.join(FILE_PATH, username, 'avatar');
+
+        if(!fs.existsSync(userDir)) {
+          fs.mkdirSync(userDir, { recursive: true });
+        }
+
+        callback(null, userDir);
       },
       filename: (req, file, callback) => {
         const uniqueSuffix = `${Date.now()}-${file.originalname}`;
@@ -45,4 +53,6 @@ export class UserController {
   updateUserAvatar(@Param('username') username: string, @UploadedFile() avatar: Express.Multer.File): Promise<IResponse> {
     return this.userService.updateAvatar(username, avatar);
   }
+  
+  
 }

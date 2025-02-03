@@ -5,17 +5,20 @@ import { Repository } from 'typeorm';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { Active } from '../../shared/enum/EUser';
 import { FileService } from '../file/file.service';
+import FileEntity from '../file/entities/file.entity';
+import { FileType } from 'src/shared/enum/EFile';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
     private fileService: FileService,
+    @InjectRepository(FileEntity) private fileRepository: Repository<FileEntity>,
   ) {}
   async findOne(username: string): Promise<IResponse> {
     const user = await this.repo.findOne({ 
       where: { username },
-      relations: ['avatar', 'thumbnail'],
+      relations: ['avatar']
     });
 
     const userData = {
@@ -44,14 +47,13 @@ export class UserService {
         where: { username },
         relations: ['avatar'],
       });
-      const uploadAvatar = await this.fileService.uploadAvatar(avatar, user.id);
+      const uploadAvatar = await this.fileService.uploadAvatar(avatar, user);
       return {
         code: HttpStatus.OK,
         success: false,
         message: 'USER.UPDATE.AVATAR.SUCCESS',
       }
     } catch (error) {
-      console.log(error);
       return {
         code: HttpStatus.CONFLICT,
         success: false,
@@ -60,6 +62,28 @@ export class UserService {
       }
     }
   } 
+
+  async updateThumbnail(username: string, thumbnail: Express.Multer.File): Promise<IResponse> {
+    try {
+      const user = await this.repo.findOne({ 
+        where: { username },
+        relations: ['thumbnail'],
+      });
+      const uploadThumbnail = await this.fileService.uploadAvatar(thumbnail, user);
+      return {
+        code: HttpStatus.OK,
+        success: false,
+        message: 'USER.UPDATE.THUMBNAIL.SUCCESS',
+      }
+    } catch(error) {
+      return {
+        code: HttpStatus.CONFLICT,
+        success: false,
+        message: 'USER.UPDATE.THUMBNAIL.FAIL',
+        errors: error
+      }
+    }
+  }
 
   async updateSelf(username: string, userAttrs: Partial<User>): Promise<IResponse> {
     try {
