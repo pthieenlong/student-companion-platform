@@ -5,8 +5,6 @@ export class VerifyUserGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.token;
-    
-    
     if(request.params.username === user.info.username || request.body.username === user.info.username) {
       return true;
     }
