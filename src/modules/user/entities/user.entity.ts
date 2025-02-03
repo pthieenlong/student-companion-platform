@@ -29,8 +29,6 @@ export default class User {
   @Column({ type: 'varchar', length: 40 })
   fullName: string;
 
-  
-
   @Column({ type: 'text', nullable: true })
   biography: string;
 
@@ -55,7 +53,6 @@ export default class User {
   
   @OneToOne(() => FileEntity,(file) => file.userAvatar,  { nullable: true, cascade: true })
   @JoinColumn({ name: 'thumbnailID' })
-
   thumbnail: FileEntity;
 
   @OneToMany(() => Note, (note) => note.createdBy)

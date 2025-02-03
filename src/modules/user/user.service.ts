@@ -29,7 +29,6 @@ export class UserService {
       major: user.major,
       school: user.school,
       groupMemberships: user.groupMemberships,
-      isActive: user.isActive,
       created_at: user.created_at
     }
 

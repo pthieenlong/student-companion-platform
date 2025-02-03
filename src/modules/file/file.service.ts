@@ -26,7 +26,7 @@ export class FileService {
     const avatar = await this.fileRepository.create({
       id: uuidv4(),
       fileName: file.originalname,
-      filePath: `${file.path}/userID/avatar`,
+      filePath: `/${userID}/avatar/${file.path}`,
       fileType: FileType.AVATAR,
       size: file.size,
       userAvatar: { id: userID }

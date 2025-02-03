@@ -40,11 +40,8 @@ export class UserController {
       }
     })
   }))
-  @UseGuards(AuthGuard, VerifyUserGuard)
   @Patch('/:username/avatar')
   updateUserAvatar(@Param('username') username: string, @UploadedFile() avatar: Express.Multer.File): Promise<IResponse> {
-    console.log(avatar);
-    
     return this.userService.updateAvatar(username, avatar);
   }
 }
