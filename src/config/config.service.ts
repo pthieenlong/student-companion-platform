@@ -70,4 +70,16 @@ export class AppConfigService {
   get swaggerVersion(): string {
     return this.configService.get<string>('SWAGGER_VERSION');
   }
+
+  get uploadDirectory() : string {
+    return this.configService.get<string>('FILE_DIRECTORY');
+  }
+
+  get fileMaxSize(): number {
+    return this.configService.get<number>('FILE_MAX_SIZE'); //15000 = 15kb
+  }
+
+  get uploadAllowedMIME(): string {
+    return this.configService.get<string>('FILE_ALLOWED_MIME')
+  }
 }

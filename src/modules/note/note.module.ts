@@ -12,9 +12,10 @@ import React from '../react/entities/react.entity';
 import { TagService } from '../tag/tag.service';
 import Tag from '../tag/entities/tag.entity';
 import FileEntity from '../file/entities/file.entity';
+import { FileModule } from '../file/file.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Note, User, React, Tag, FileEntity]), JwtModule, AuthModule],
+  imports: [TypeOrmModule.forFeature([Note, User, React, Tag, FileEntity]), JwtModule, AuthModule, FileModule],
   controllers: [NoteController],
   providers: [NoteService, AuthGuard, AppConfigService, TagService]
 })

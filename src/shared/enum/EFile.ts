@@ -1,6 +1,6 @@
-export enum FileEnum {
-  AVATAR,
-  THUMBNAIL,
-  NOTE_ATTACHMENT,
-  NOTE_IMAGE
+export enum FileType {
+  AVATAR = "AVATAR",
+  THUMBNAIL = "THUMBNAIL",
+  NOTE_ATTACHMENT = "NOTE_ATTACHMENT",
+  NOTE_IMAGE = "NOTE_IMAGE"
 }

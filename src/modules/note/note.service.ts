@@ -11,6 +11,7 @@ import { TagService } from '../tag/tag.service';
 import Tag from '../tag/entities/tag.entity';
 import { getNow } from 'src/shared/utils/Time';
 import FileEntity from '../file/entities/file.entity';
+import { FileService } from '../file/file.service';
 @Injectable()
 export class NoteService {
   constructor(
@@ -20,9 +21,10 @@ export class NoteService {
     @InjectRepository(Tag) private tagRepository: Repository<Tag>,
     @InjectRepository(FileEntity) private fileRepository: Repository<FileEntity>,
     private tagService: TagService,
+    private fileService: FileService,
   ) {  }
 
-  async createNote(note: Partial<Note>, username: string): Promise<IResponse> {
+  async createNote(note: Partial<Note>, username: string, files?: Express.Multer.File[]): Promise<IResponse> {
     try {
       const slug = convertTextToSlug(note.title);
       const exist = await this.noteRepository.findOneBy({ slug });
@@ -38,7 +40,9 @@ export class NoteService {
       const existingTags = await this.tagRepository.find({ 
         where: { slug: In(tags) }
       })
-
+      if(files && files.length > 0) {
+        await this.fileService.uploadAttachFilesToNote(files, note.id);
+      }
       const newNote = await this.noteRepository.save({...note, tags: existingTags, slug, createdByUsername: username, id: uuidv4() })
       return {
         code: HttpStatus.CREATED,
@@ -53,6 +57,7 @@ export class NoteService {
           createdByUsername: newNote.createdByUsername,
           likeCount: newNote.likeCount,
           tags: newNote.tags.map(tag => { return { name: tag.name, slug: tag.slug }}),
+          files: note.files?.map(file => { return { name: file.fileName, path: file.filePath }}),
           created_at: newNote.created_at,
           updated_at: newNote.updated_at,
         }
@@ -73,12 +78,12 @@ export class NoteService {
       const skip = (page - 1) * take;
       const [result, total] = await this.noteRepository.findAndCount({
         where: { createdByUsername: username },
-        relations:['tags'],
+        relations:['tags', 'files'],
         order: { created_at: "DESC" },
         take,
         skip,
       });
-      if(total <= 0) {
+      if(total < 0) {
         return {
           code: HttpStatus.CONFLICT,
           success: false,
@@ -96,6 +101,7 @@ export class NoteService {
           createdByUsername: note.createdByUsername,
           likeCount: note.likeCount,
           tags: note.tags?.map(tag => { return { name: tag.name, slug: tag.slug }}),
+          files: note.files?.map(file => { return { name: file.fileName, path: file.filePath }}),
           created_at: note.created_at,
           updated_at: note.updated_at,
         }
@@ -159,9 +165,12 @@ export class NoteService {
     }
   }
 
-  async updateNoteBySlug(slug: string, noteAttr: Partial<Note>): Promise<IResponse>{
+  async updateNoteBySlug(slug: string, noteAttr: Partial<Note>, files?: Express.Multer.File[]): Promise<IResponse>{
     try {
-      const note = await this.noteRepository.findOneBy({ slug });
+      const note = await this.noteRepository.findOne({
+        where: { slug },
+        relations: ['files'],
+      });
       if(!note) {
         return {
           code: HttpStatus.CONFLICT,
@@ -169,6 +178,16 @@ export class NoteService {
           message: 'NOTE.GET.NOT_FOUND',
         }
       }
+
+      if(files && files.length > 0) {
+        if(note.files.length > 0) {
+          note.files.map(async (file) => {
+            await this.fileRepository.delete({ id: file.id })
+          })
+        } 
+        await this.fileService.uploadAttachFilesToNote(files, note.id);
+      }
+
       if(noteAttr.title) {
         const newSlug = convertTextToSlug(noteAttr.title);
         const isExist = await this.noteRepository.findOneBy({ slug: newSlug });
@@ -258,7 +277,7 @@ export class NoteService {
     }
   }
 
-  async deletePost(slug: string, username: string): Promise<IResponse> {
+  async deleteNote(slug: string, username: string): Promise<IResponse> {
     try {
 
       const deletedNote = await this.noteRepository.findOneBy({ slug, createdByUsername: username });
