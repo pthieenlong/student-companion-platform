@@ -31,7 +31,6 @@ export class FileService {
         userAvatar: { id: user.id }
       }
     })
-
     if(avatar) {
       if(fs.existsSync(avatar.filePath)) {
         fs.unlinkSync(avatar.filePath);
@@ -90,4 +89,5 @@ export class FileService {
     return await this.fileRepository.save(thumbnail);
   }
 }
+
 
