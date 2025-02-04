@@ -23,7 +23,12 @@ export class AuthService {
         success: false,
         message: 'USER.REGISTER.REQUIRED'
       }
-    else if(await this.authRepository.findOneBy({ username: user.username })) {
+    else if(await this.authRepository.findOne({
+      where: [
+        { username: user.username },
+        { email: user.email }
+      ]
+    })) {
       return {
         code: HttpStatus.NOT_ACCEPTABLE,
         success: false,
@@ -156,7 +161,7 @@ export class AuthService {
 
   async sendActiveRequest(account: Partial<User>): Promise<IResponse> {
     try {
-      const user = await this.authRepository.findOneBy({ username: account.username });
+      const user = await this.authRepository.findOneBy({ username: account.username, email: account.email });
       if(!user) {
         return {
           code: HttpStatus.NOT_FOUND,
@@ -181,18 +186,19 @@ export class AuthService {
         data: { otp }
       }
     } catch (error) {
-      console.log(error);
       return {
         code: HttpStatus.CONFLICT,
         success: false,
         message: 'USER.SEND_REQUEST.FAIL',
+        errors: error
       }
     }
   }
 
   async activeUser(account: Partial<User>, otp: string): Promise<IResponse> {
     try {
-      const user = await this.authRepository.findOneBy({ username: account.username });
+      const user = await this.authRepository.findOneBy({ username: account.username, email: account.email });
+
       if(!user) {
         return {
           code: HttpStatus.NOT_FOUND,
@@ -218,19 +224,19 @@ export class AuthService {
       } else {
         user.isActive = Active.ACTIVE;
         await this.authRepository.save(user);
+        await this.otpService.activeUser(account.username, account.email);
         return {
           code: HttpStatus.OK,
           success: true,
           message: 'USER.ACTIVE.SUCCESS'
         }
       }
-
     } catch (error) {
-      error
       return {
         code: HttpStatus.CONFLICT,
         success: false,
-        message: 'USER.ACTIVE.FAIL'
+        message: 'USER.ACTIVE.FAIL',
+        errors: error
       }
     }
   }

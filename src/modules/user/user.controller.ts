@@ -34,7 +34,7 @@ export class UserController {
     storage: diskStorage({
       destination: (req, file, callback) => {
         const username = req.body.username;
-        const userDir = path.join(FILE_PATH, username, 'avatar');
+        const userDir = path.join(FILE_PATH, username, 'self');
 
         if(!fs.existsSync(userDir)) {
           fs.mkdirSync(userDir, { recursive: true });
@@ -43,7 +43,7 @@ export class UserController {
         callback(null, userDir);
       },
       filename: (req, file, callback) => {
-        const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+        const uniqueSuffix = `AVATAR-${Date.now()}-${file.originalname}`;
         callback(null, uniqueSuffix);
       }
     })
@@ -53,5 +53,27 @@ export class UserController {
     return this.userService.updateAvatar(username, avatar);
   }
   
-  
+  @UseGuards(AuthGuard, VerifyUserGuard)
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: (req, file, callback) => {
+        const username = req.body.username;
+        const userDir = path.join(FILE_PATH, username, 'self');
+
+        if(!fs.existsSync(userDir)) {
+          fs.mkdirSync(userDir, { recursive: true });
+        }
+
+        callback(null, userDir);
+      },
+      filename: (req, file, callback) => {
+        const uniqueSuffix = `THUMBNAIL-${Date.now()}-${file.originalname}`;
+        callback(null, uniqueSuffix);
+      }
+    })
+  }))
+  @Patch('/:username/thumbnail')
+  updateUserThumbnail(@Param('username') username: string, @UploadedFile() thumbnail: Express.Multer.File): Promise<IResponse> {
+    return this.userService.updateThumbnail(username, thumbnail);
+  }
 }

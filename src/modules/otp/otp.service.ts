@@ -28,7 +28,6 @@ export class OtpService {
         data: { code: otp }
       }
     } catch (error) {
-      console.log(error);
       return {
         code: HttpStatus.CONFLICT,
         success: false,
@@ -43,6 +42,34 @@ export class OtpService {
       return otp;
     } catch (error) {
       throw new NotFoundException();
+    }
+  }
+
+  async activeUser(username: string, email: string): Promise<IResponse> {
+    try {
+      const otp = await this.otpRepo.findOneBy( { email, username, isUsed: false })
+      if(!otp) {
+        return {
+          code: HttpStatus.NOT_FOUND,
+          success: false,
+          message: 'OTP.GET.FAIL',
+        }
+      } else {
+        otp.isUsed = true;
+        await this.otpRepo.save(otp);
+        return {
+          code: HttpStatus.OK,
+          success: true,
+          message: 'OTP.ACTIVE.SUCCESS',
+        }
+      }
+    } catch (error) {
+     return {
+          code: HttpStatus.CONFLICT,
+          success: false,
+          message: 'OTP.ACTIVE.FAIL',
+          errors: error
+        }
     }
   }
 }

@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { FileType } from 'src/shared/enum/EFile';
 import { v4 as uuidv4 } from 'uuid';
 import User from '../user/entities/user.entity';
+import { getNow } from '../../shared/utils/Time';
 @Injectable()
 export class FileService {
   constructor(@InjectRepository(FileEntity) private fileRepository: Repository<FileEntity>, @InjectRepository(User) private userRepository: Repository<User>) {}
@@ -24,11 +25,12 @@ export class FileService {
   }
 
   async uploadAvatar(file: Express.Multer.File, user: User) { 
-    con st fs = require('fs');
+    const fs = require('fs');
     let avatar = await this.fileRepository.findOne({
       where: { 
         userAvatar: { id: user.id }
       }
+    })
 
     if(avatar) {
       if(fs.existsSync(avatar.filePath)) {
@@ -50,10 +52,11 @@ export class FileService {
     }
 
     user.avatar = avatar;
-
+    user.updated_at = getNow();
     await this.userRepository.save(user);
     return await this.fileRepository.save(avatar);
   }
+
   async uploadThumbnail(file: Express.Multer.File, user: User) { 
     const fs = require('fs');
     let thumbnail = await this.fileRepository.findOne({
@@ -77,12 +80,12 @@ export class FileService {
         filePath: file.path,
         fileType: FileType.THUMBNAIL,
         size: file.size,
-        userAvatar: { id: user.id },
+        userThumbnail: { id: user.id },
       });
     }
 
-    user.avatar = thumbnail;
-
+    user.thumbnail = thumbnail;
+    user.updated_at = getNow();
     await this.userRepository.save(user);
     return await this.fileRepository.save(thumbnail);
   }

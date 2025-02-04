@@ -6,7 +6,8 @@ import { IResponse } from '../../shared/types/CustomResponse';
 import { Active } from '../../shared/enum/EUser';
 import { FileService } from '../file/file.service';
 import FileEntity from '../file/entities/file.entity';
-import { FileType } from 'src/shared/enum/EFile';
+import { FileType } from '../../shared/enum/EFile';
+import { getNow } from '../../shared/utils/Time';
 
 @Injectable()
 export class UserService {
@@ -19,13 +20,31 @@ export class UserService {
   async findOne(username: string): Promise<IResponse> {
     const user = await this.repo.findOne({ 
       where: { username },
-      relations: ['avatar']
+      relations: ['avatar', 'thumbnail']
     });
+
+    const thumbnail = {
+      id: user.thumbnail.id,
+      fileName: user.thumbnail.fileName,
+      filePath: user.thumbnail.filePath,
+      fileType: user.thumbnail.fileType,
+      created_At: user.thumbnail.created_at,
+      updated_At: user.thumbnail.updated_at,
+    }
+    
+    const avatar = {
+      id: user.avatar.id,
+      fileName: user.avatar.fileName,
+      filePath: user.avatar.filePath,
+      fileType: user.avatar.fileType,
+      created_At: user.avatar.created_at,
+      updated_At: user.avatar.updated_at,
+    }
 
     const userData = {
       username: user.username,
-      thumbnail: user.thumbnail,
-      avatar: user.avatar,
+      thumbnail,
+      avatar,
       phoneNumber: user.phoneNumber,
       biography: user.biography,
       major: user.major,
@@ -70,7 +89,7 @@ export class UserService {
         where: { username },
         relations: ['thumbnail'],
       });
-      const uploadThumbnail = await this.fileService.uploadAvatar(thumbnail, user);
+      const uploadThumbnail = await this.fileService.uploadThumbnail(thumbnail, user);
       return {
         code: HttpStatus.OK,
         success: false,
@@ -98,6 +117,7 @@ export class UserService {
       }
 
       Object.assign(user, userAttrs);
+      user.updated_at = getNow();
       await this.repo.save(user);
       return {
         code: HttpStatus.OK,
@@ -109,7 +129,7 @@ export class UserService {
         code: HttpStatus.CONFLICT,
         success: false,
         message: 'USER.UPDATE.FAIL',
-        errors: [...error]
+        errors: error
       }
     }
   }
@@ -137,7 +157,7 @@ export class UserService {
         code: HttpStatus.CONFLICT,
         success: false,
         message: 'USER.ACTIVE.FAIL',
-        errors: [...error]
+        errors: error
       }
     }
   }
