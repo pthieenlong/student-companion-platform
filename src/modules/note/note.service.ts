@@ -129,7 +129,11 @@ export class NoteService {
 
   async getNoteBySlug(slug: string): Promise<IResponse> {
     try {
-      const note = await this.noteRepository.findOneBy({ slug });
+      const note = await this.noteRepository.findOne({
+        where: { slug },
+        relations: ['files', 'comments']
+      });
+      
       if(note) 
         return {
           code: HttpStatus.OK,
@@ -144,6 +148,8 @@ export class NoteService {
             createdByUsername: note.createdByUsername,
             likeCount: note.likeCount,
             tags: note.tags?.map(tag => { return { name: tag.name, slug: tag.slug }}),
+            comments: [],//note.comments,
+            files: note.files?.map(file => { return { fileName: file.fileName, filePath: file.filePath, fileType: file.fileType,}}),
             created_at: note.created_at,
             updated_at: note.updated_at,
           }
