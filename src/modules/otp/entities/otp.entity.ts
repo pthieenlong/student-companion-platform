@@ -18,5 +18,5 @@ export class OtpEntity {
   isUsed: boolean
 
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-  created_at: string;
+  createdAt: string;
 }

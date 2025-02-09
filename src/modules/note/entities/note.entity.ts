@@ -50,10 +50,10 @@ export default class Note {
   tags: Tag[];
 
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-  created_at: string;
+  createdAt: string;
 
   @Column({type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-  updated_at: string;
+  updatedAt: string;
 
   @DeleteDateColumn({type: 'timestamp', default: null })
   deleteAt?: string | null;
