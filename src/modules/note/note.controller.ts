@@ -7,6 +7,8 @@ import { VerifyUserGuard } from '../../common/guards/auth/verify-user.guard';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FILE_PATH } from 'src/shared/constants/const';
+import * as fs from 'fs';
+import * as path from 'path';
 @Controller('note')
 export class NoteController {
   constructor(private noteService: NoteService) {}
@@ -44,21 +46,29 @@ export class NoteController {
   async getNoteBySlug(@Param('slug') slug: string): Promise<IResponse> {
     return await this.noteService.getNoteBySlug(slug)
   }
-
-  @Patch('/:slug')
+  
+  @UseGuards(AuthGuard, VerifyUserGuard)
   @UseInterceptors(FilesInterceptor('file', 3, {
     storage: diskStorage({
       destination: (req, file, callback) => {
-        callback(null, FILE_PATH);
+        const username = req.params.username;
+        
+        const slug = req.params.slug;
+        
+        const userDir = path.join(FILE_PATH, username, 'note', slug);
+        if(!fs.existsSync(userDir)) {
+          fs.mkdirSync(userDir, { recursive: true });
+        }
+        callback(null, userDir);
       },
       filename: (req, file, callback) => {
-        const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+        const uniqueSuffix = `${file.originalname}`;
         callback(null, uniqueSuffix);
       }
     })
   }))
-  @UseGuards(AuthGuard)
-  async updateNoteBySlug(@Param('slug') slug: string, @Body() body: UpdateNoteDTO,  @UploadedFiles() files?: Express.Multer.File[]) {
+  @Patch('/:username/:slug')
+  async updateNoteBySlug(@Param('username') username: string, @Param('slug') slug: string, @Body() body: UpdateNoteDTO,  @UploadedFiles() files?: Express.Multer.File[]) {
     return await this.noteService.updateNoteBySlug(slug, { ...body }, files ? files : null);
   }
 
