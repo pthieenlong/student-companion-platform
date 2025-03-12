@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IResponse } from '../../shared/types/CustomResponse';
 import { RegisterDTO, LoginDTO } from './DTO/auth.dto';
 import { CustomRequest } from '../../common/interceptors/customRequest.interceptor';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { VerifyUserGuard } from 'src/common/guards/auth/verify-user.guard';
+import { response, Response } from 'express';
+import { AppConfigService } from 'src/config/config.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private configService: AppConfigService) {}
 
   @CustomRequest(RegisterDTO)
   @Post('/register')
@@ -26,13 +28,21 @@ export class AuthController {
 
   @CustomRequest(LoginDTO)
   @Post('/signin')
-  login(@Body() body: LoginDTO): Promise<IResponse> {
-    const user = {
+  async login(@Body() body: LoginDTO, @Res({ passthrough: true}) res: Response): Promise<IResponse> {
+    const requestUser = {
       username: body.username,
       password: body.password
     }
-
-    return this.authService.login(user);
+    const responseUser = await this.authService.login(requestUser); 
+    if(responseUser.success) {
+      res.cookie('accessToken', responseUser.data.accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+    }
+    return { ...responseUser, data: { ...responseUser.data, accessToken: null } };
   }
 
   @Get('/generate-token')  

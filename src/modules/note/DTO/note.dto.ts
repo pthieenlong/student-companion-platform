@@ -21,8 +21,6 @@ export class CreateNoteDTO {
   @IsArray()
   @IsOptional()
   files: FileEntity[];
-
-
 }
 
 export class UpdateNoteDTO {

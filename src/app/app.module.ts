@@ -14,13 +14,14 @@ import { OtpModule } from '../modules/otp/otp.module';
 import { NoteModule } from '../modules/note/note.module';
 import { TagModule } from '../modules/tag/tag.module';
 import { FileModule } from '../modules/file/file.module';
+import { ScheduleModule } from 'src/modules/schedule/schedule.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     
-    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, MailModule, MailerModule, OtpModule, NoteModule, TagModule, FileModule],
+    AppConfigModule, DatabaseModule, SwaggerModule, AuthModule, UserModule, ScheduleModule, MailModule, MailerModule, OtpModule, NoteModule, TagModule, FileModule],
   controllers: [AppController],
   providers: [AppService, AppConfigService],
 })

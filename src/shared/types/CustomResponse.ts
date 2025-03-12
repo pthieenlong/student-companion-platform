@@ -8,7 +8,7 @@ export interface Pagination<T> {
 	item: T;
 	totalItem?: number;
 };
-export interface IResponse<T = object> {
+export interface IResponse<T = object | any> {
 	code: HttpStatus;
 	success: boolean;
 	message: string | ValidationError[];

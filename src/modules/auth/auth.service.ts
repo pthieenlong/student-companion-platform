@@ -102,7 +102,7 @@ export class AuthService {
           code: HttpStatus.OK,
           success: true,
           message: 'USER.LOGIN.SUCCESS',
-          data: { accessToken }
+          data: { accessToken, username: user.username, id: user.id }
         }
       }
     } catch(error) {
@@ -140,7 +140,8 @@ export class AuthService {
         info: {
           username: user.username,
           id: user.id,
-          role: user.role
+          roles: [...user.role],
+          active: user.isActive
         },
       };
       return this.jwtService.sign(payload, {

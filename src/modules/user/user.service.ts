@@ -28,8 +28,8 @@ export class UserService {
       fileName: user.thumbnail.fileName,
       filePath: user.thumbnail.filePath,
       fileType: user.thumbnail.fileType,
-      created_At: user.thumbnail.created_at,
-      updated_At: user.thumbnail.updated_at,
+      created_At: user.thumbnail.createdAt,
+      updated_At: user.thumbnail.updatedAt,
     }
     
     const avatar = {
@@ -37,8 +37,8 @@ export class UserService {
       fileName: user.avatar.fileName,
       filePath: user.avatar.filePath,
       fileType: user.avatar.fileType,
-      created_At: user.avatar.created_at,
-      updated_At: user.avatar.updated_at,
+      created_At: user.avatar.createdAt,
+      updated_At: user.avatar.updatedAt,
     }
 
     const userData = {
@@ -50,7 +50,7 @@ export class UserService {
       major: user.major,
       school: user.school,
       groupMemberships: user.groupMemberships,
-      created_at: user.created_at
+      created_at: user.createdAt
     }
 
     return {
@@ -68,6 +68,9 @@ export class UserService {
         relations: ['avatar'],
       });
       const uploadAvatar = await this.fileService.uploadAvatar(avatar, user);
+      user.avatar = uploadAvatar;
+      user.updatedAt = getNow();
+      await this.repo.save(user);
       return {
         code: HttpStatus.OK,
         success: false,
@@ -90,6 +93,9 @@ export class UserService {
         relations: ['thumbnail'],
       });
       const uploadThumbnail = await this.fileService.uploadThumbnail(thumbnail, user);
+      user.thumbnail = uploadThumbnail;
+      user.updatedAt = getNow();
+      await this.repo.save(user);
       return {
         code: HttpStatus.OK,
         success: false,
@@ -117,7 +123,7 @@ export class UserService {
       }
 
       Object.assign(user, userAttrs);
-      user.updated_at = getNow();
+      user.updatedAt = getNow();
       await this.repo.save(user);
       return {
         code: HttpStatus.OK,

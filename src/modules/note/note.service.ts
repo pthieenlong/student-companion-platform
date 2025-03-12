@@ -58,8 +58,8 @@ export class NoteService {
           likeCount: newNote.likeCount,
           tags: newNote.tags.map(tag => { return { name: tag.name, slug: tag.slug }}),
           files: note.files?.map(file => { return { name: file.fileName, path: file.filePath }}),
-          created_at: newNote.created_at,
-          updated_at: newNote.updated_at,
+          created_at: newNote.createdAt,
+          updated_at: newNote.updatedAt,
         }
       }
     } catch (error) {
@@ -79,7 +79,7 @@ export class NoteService {
       const [result, total] = await this.noteRepository.findAndCount({
         where: { createdByUsername: username },
         relations:['tags', 'files'],
-        order: { created_at: "DESC" },
+        order: { createdAt: "DESC" },
         take,
         skip,
       });
@@ -102,8 +102,8 @@ export class NoteService {
           likeCount: note.likeCount,
           tags: note.tags?.map(tag => { return { name: tag.name, slug: tag.slug }}),
           files: note.files?.map(file => { return { name: file.fileName, path: file.filePath }}),
-          created_at: note.created_at,
-          updated_at: note.updated_at,
+          created_at: note.createdAt,
+          updated_at: note.updatedAt,
         }
       })
       return {
@@ -150,13 +150,13 @@ export class NoteService {
             tags: note.tags?.map(tag => { return { name: tag.name, slug: tag.slug }}),
             comments: [],//note.comments,
             files: note.files?.map(file => { return { fileName: file.fileName, filePath: file.filePath, fileType: file.fileType,}}),
-            created_at: note.created_at,
-            updated_at: note.updated_at,
+            created_at: note.createdAt,
+            updated_at: note.updatedAt,
           }
         }
       else 
         return {
-          code: HttpStatus.CONFLICT,
+          code: HttpStatus.NOT_FOUND,
           success: false,
           message: 'NOTE.GET.NOT_FOUND',
         }
@@ -179,7 +179,7 @@ export class NoteService {
       });
       if(!note) {
         return {
-          code: HttpStatus.CONFLICT,
+          code: HttpStatus.NOT_FOUND,
           success: false,
           message: 'NOTE.GET.NOT_FOUND',
         }
@@ -204,7 +204,7 @@ export class NoteService {
             message: 'NOTE.GET.EXIST_TITLE',
           }
         } else {
-          await this.noteRepository.update( { slug },{ ...noteAttr, updated_at: getNow(), slug: newSlug });
+          await this.noteRepository.update( { slug },{ ...noteAttr, updatedAt: getNow(), slug: newSlug });
           return {
             code: HttpStatus.OK,
             success: true,
@@ -212,7 +212,7 @@ export class NoteService {
           }
         }
       } else {
-        await this.noteRepository.update( { slug },{ ...noteAttr, updated_at: getNow() });
+        await this.noteRepository.update( { slug },{ ...noteAttr, updatedAt: getNow() });
           return {
             code: HttpStatus.OK,
             success: true,
@@ -220,11 +220,11 @@ export class NoteService {
           }
       }
     } catch (error) {
-      console.log(error);
       return {
         code: HttpStatus.CONFLICT,
         success: false,
-        message: 'NOTE.UPDATE.FAIL'
+        message: 'NOTE.UPDATE.FAIL',
+        errors: error
       }
     }
   }

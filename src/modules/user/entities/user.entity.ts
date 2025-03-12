@@ -4,7 +4,9 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColu
 import { GroupUser } from "../../group/entities/groupUser.entity";
 import Note from "../../note/entities/note.entity";
 import React from "../../react/entities/react.entity";
-import FileEntity from "src/modules/file/entities/file.entity";
+import FileEntity from "../../file/entities/file.entity";
+import { Schedule } from "../../schedule/entities/schedule.entity";
+import { scheduled } from "rxjs";
 
 @Entity()
 export default class User {
@@ -60,6 +62,10 @@ export default class User {
   
   @OneToMany(() => React, (react) => react.user)
   reacts: React[]
+
+  @OneToMany(() => Schedule, (schedule) => schedule.createdBy)
+  @JoinColumn({ name: 'schedules' })
+  schedules: Schedule[];
 
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   createdAt: string;
