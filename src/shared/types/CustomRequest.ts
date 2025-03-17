@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 type CustomRequest = Request & {
-  user_token: {
+  token: {
     info: {
       username: string,
       roles: [],

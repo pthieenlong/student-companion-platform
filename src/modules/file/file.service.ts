@@ -49,10 +49,7 @@ export class FileService {
         userAvatar: { id: user.id },
       });
     }
-
-    user.avatar = avatar;
-    user.updated_at = getNow();
-    await this.userRepository.save(user);
+   
     return await this.fileRepository.save(avatar);
   }
 
@@ -83,9 +80,6 @@ export class FileService {
       });
     }
 
-    user.thumbnail = thumbnail;
-    user.updated_at = getNow();
-    await this.userRepository.save(user);
     return await this.fileRepository.save(thumbnail);
   }
 }
