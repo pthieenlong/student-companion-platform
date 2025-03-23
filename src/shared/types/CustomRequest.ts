@@ -1,6 +1,9 @@
 import { Request } from "express";
 
 type CustomRequest = Request & {
+  cookies: {
+    accessToken: string
+  }
   token: {
     info: {
       username: string,

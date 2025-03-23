@@ -37,11 +37,12 @@ export class AuthController {
     if(responseUser.success) {
       res.cookie('accessToken', responseUser.data.accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: 'strict',
         maxAge: 24 * 60 * 60 * 1000,
       })
     }
+    
     return { ...responseUser, data: { ...responseUser.data, accessToken: null } };
   }
 

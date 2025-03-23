@@ -16,12 +16,16 @@ export class UserController {
   // @UseGuards(AuthGuard)
   @Get('/:username')
   findUser(@Param('username') username: string): Promise<IResponse> {
+    console.log(username);
+    
     return this.userService.findOne(username);
   }
   
   @UseGuards(AuthGuard, VerifyUserGuard)
   @Put('/:username')
   updateUser(@Body() userUpdateDTO: UserUpdateDTO, @Param('username') username: string) {
+    console.log(userUpdateDTO);
+    
     return this.userService.updateSelf(username, userUpdateDTO);
   }
 

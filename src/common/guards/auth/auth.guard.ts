@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromRequest(request);
+    const token = this.extractTokenFromCookie(request);
     if(!token) {
       throw new HttpException(
         'USER.LOGIN.NOT_FOUND',
@@ -24,6 +24,8 @@ export class AuthGuard implements CanActivate {
       });
       request['token'] = payload;
     } catch {
+      console.log('UNAUTHORIZED');
+      
       throw new HttpException(
               'USER.LOGIN.NOT_FOUND',
               HttpStatus.UNAUTHORIZED
@@ -32,8 +34,7 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  public extractTokenFromRequest(request: CustomRequest): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  public extractTokenFromCookie(request: CustomRequest): string | undefined {
+    return request.cookies.accessToken;
   }
 }
