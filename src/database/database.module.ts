@@ -16,6 +16,8 @@ import { AppConfigModule } from '../config/config.module';
         database: configService.databaseName,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: configService.databaseSynchronize,
+        // url: configService.databaseUrl,
+        // ssl: true
       })
     }),
   ],
