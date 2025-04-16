@@ -23,28 +23,28 @@ export class UserService {
       relations: ['avatar', 'thumbnail']
     });
 
-    const thumbnail = {
-      id: user.thumbnail.id,
-      fileName: user.thumbnail.fileName,
-      filePath: user.thumbnail.filePath,
-      fileType: user.thumbnail.fileType,
-      created_At: user.thumbnail.createdAt,
-      updated_At: user.thumbnail.updatedAt,
-    }
+    const thumbnail = user.thumbnail ?{
+      id: user.thumbnail?.id,
+      fileName: user.thumbnail?.fileName,
+      filePath: user.thumbnail?.filePath,
+      fileType: user.thumbnail?.fileType,
+      created_At: user.thumbnail?.createdAt,
+      updated_At: user.thumbnail?.updatedAt,
+    } : null;
     
-    const avatar = {
+    const avatar = user.avatar ? {
       id: user.avatar.id,
-      fileName: user.avatar.fileName,
-      filePath: user.avatar.filePath,
-      fileType: user.avatar.fileType,
-      created_At: user.avatar.createdAt,
-      updated_At: user.avatar.updatedAt,
-    }
+      fileName: user.avatar?.fileName,
+      filePath: user.avatar?.filePath,
+      fileType: user.avatar?.fileType,
+      created_At: user.avatar?.createdAt,
+      updated_At: user.avatar?.updatedAt,
+    } : null;
 
     const userData = {
       username: user.username,
-      thumbnail,
-      avatar,
+      thumbnail: thumbnail,  
+      avatar: avatar,
       phoneNumber: user.phoneNumber,
       biography: user.biography,
       major: user.major,

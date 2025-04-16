@@ -7,6 +7,11 @@ export class AppConfigService {
   get port(): number {
     return this.configService.get<number>('PORT');
   }
+
+  get databaseUrl(): string {
+    return this.configService.get<string>('DATABASE_URL');
+  }
+
   get databaseHost(): string {
     return this.configService.get<string>('DATABASE_HOST');
   }
