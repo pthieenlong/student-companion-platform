@@ -9,23 +9,32 @@ import { diskStorage } from 'multer';
 import { FILE_PATH } from '../../shared/constants/const';
 import * as fs from 'fs';
 import * as path from "path";
+import { RedisService } from '../../redis/redis.service';
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private readonly redisService: RedisService,
+    
+  ) {}
 
   // @UseGuards(AuthGuard)
   @Get('/:username')
-  findUser(@Param('username') username: string): Promise<IResponse> {
-    console.log(username);
-    
-    return this.userService.findOne(username);
+  async findUser(@Param('username') username: string): Promise<IResponse> {
+    const cacheKey = `user:${username}`;
+    const cachedUser = await this.redisService.get(cacheKey);
+    if (cachedUser) {
+      return JSON.parse(cachedUser);
+    }
+
+    const user = await this.userService.findOne(username);
+    await this.redisService.set(cacheKey, JSON.stringify(user), 60 * 60);
+    return user;
   }
   
   @UseGuards(AuthGuard, VerifyUserGuard)
   @Put('/:username')
   updateUser(@Body() userUpdateDTO: UserUpdateDTO, @Param('username') username: string) {
-    console.log(userUpdateDTO);
-    
     return this.userService.updateSelf(username, userUpdateDTO);
   }
 

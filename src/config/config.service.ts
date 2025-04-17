@@ -87,4 +87,14 @@ export class AppConfigService {
   get uploadAllowedMIME(): string {
     return this.configService.get<string>('FILE_ALLOWED_MIME')
   }
+
+  get redisHost(): string {
+    return this.configService.get<string>('REDIS_HOST');
+  }
+  get redisPort(): number {
+    return this.configService.get<number>('REDIS_PORT');
+  }
+  get redisPassword(): string {
+    return this.configService.get<string>('REDIS_PASSWORD');
+  }
 }
